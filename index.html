@@ -117,7 +117,7 @@
     </main>
 
     <script>
-      const map = L.map("map").setView([33.775, -84.397], 15);
+      const map = L.map("map").setView([33.775, -84.399], 15.3);
       const attribution =
         'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>; ' +
         'POI via <a href="http://www.overpass-api.de/">Overpass</a>.';
@@ -129,12 +129,9 @@
 
       const flockNodes = new L.OverPassLayer({
         query: `
-          (
-            node["man_made"="surveillance"]["manufacturer:wikidata"="Q108485435"]({{bbox}});
-            node["man_made"="surveillance"]["brand:wikidata"="Q108485435"]({{bbox}});
-          );
+          (node["man_made"="surveillance"][~"(manufacturer|brand):wikidata"~"Q108485435"]({{bbox}}););
           out center;
-        `,
+        `.trim(),
       });
 
       map.addLayer(flockNodes);
