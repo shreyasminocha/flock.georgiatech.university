@@ -18,12 +18,41 @@
         margin: 2rem auto;
         padding: 0 1rem;
       }
+      #map {
+        height: 50vw;
+        max-height: 30rem;
+      }
       iframe {
         width: 100%;
         height: 80vh;
         border: 0;
       }
     </style>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-overpass-layer@2.9.0/dist/OverPassLayer.css"
+      integrity="sha256-uiNFw/kWfsTwgaHZDDipam8QDRMrTkO0qP5qSB3XBik="
+      crossorigin=""
+    />
+
+    <script
+      src="https://unpkg.com/leaflet-overpass-layer@2.9.0/dist/OverPassLayer.bundle.js"
+      integrity="sha256-hw6ctMBhF9nOCIfjFvfDl7NjkFI9LHhBFi0JZU0UREQ="
+      crossorigin=""
+    ></script>
   </head>
   <body>
     <main>
@@ -42,6 +71,8 @@
         <a href="https://ksualprs.com/">KSU ALPR website</a>.
       </p>
 
+      <div id="map"></div>
+
       <h2>FOIA documents</h2>
 
       <h3>Flock Safety 5.6.2025.pdf</h3>
@@ -59,5 +90,29 @@
       <h3>Flock Safety 12.31.2023.pdf</h3>
       <iframe src="/assets/Flock Safety 12.31.2023.pdf"></iframe>
     </main>
+
+    <script>
+      const map = L.map("map").setView([33.775, -84.397], 15);
+      const attribution =
+        'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>; ' +
+        'POI via <a href="http://www.overpass-api.de/">Overpass</a>.';
+
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution,
+      }).addTo(map);
+
+      const flockNodes = new L.OverPassLayer({
+        query: `
+          (
+            node["man_made"="surveillance"]["manufacturer:wikidata"="Q108485435"]({{bbox}});
+            node["man_made"="surveillance"]["brand:wikidata"="Q108485435"]({{bbox}});
+          );
+          out center;
+        `,
+      });
+
+      map.addLayer(flockNodes);
+    </script>
   </body>
 </html>
